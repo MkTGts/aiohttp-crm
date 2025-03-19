@@ -22,7 +22,7 @@ class View(AiohttpView):
         return super().request
 
 
-app = Application()  #AiohttpAplication()
+app = Application()
 
 
 def run_app():
