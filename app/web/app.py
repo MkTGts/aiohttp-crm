@@ -1,6 +1,6 @@
 from aiohttp.web import Application as AiohttpAplication, run_app as aiohttp_run_app, View as AiohttpView, Request as AiohttpRequset
 from app.crm.routes import setup_routes
-from typing import Optional, TYPE_CHECKING
+from typing import Optional
 from app.store.crm.accessor import CrmAccessor
 from app.store import setup_accessor
 
@@ -22,7 +22,7 @@ class View(AiohttpView):
         return super().request
 
 
-app = AiohttpAplication()
+app = Application()  #AiohttpAplication()
 
 
 def run_app():
