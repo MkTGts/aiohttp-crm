@@ -4,7 +4,7 @@ from app.crm.models import User
 import uuid
 from aiohttp.web_exceptions import HTTPNotFound
 from aiohttp_apispec import docs, request_schema, response_schema, querystring_schema
-from app.crm.schemes import UserSchema, ListUsersResponseSchema, UserGetSchema, UserGetResponseSchema, UserAddSchema
+from app.crm.schemes import UserSchema, ListUsersResponseSchema, UserGetSchema, UserGetResponseSchema, UserAddSchema, UserGetRequestSchema
 from app.web.schemes import OkResponseSchema
 
 
@@ -12,12 +12,13 @@ class AddUserView(View):
     @docs(
             tags=["crm"],
             summary="Add new user",
-            descridescription="Add new user to database"
+            description="Add new user to database"
     )
     @request_schema(UserAddSchema)
     @response_schema(OkResponseSchema, 200)
+
     async def post(self):
-        data = self.request.json()
+        data = self.request["data"]
         user = User(email=data['email'], _id=uuid.uuid4())
         await self.request.app.crm_accessor.add_user(user)
         return json_response()
@@ -27,14 +28,13 @@ class ListUsersView(View):
     @docs(
             tags=["crm"],
             summary="List users",
-            descridescription="List users from database"
+            description="List users from database"
     )
-    @request_schema(UserSchema)
     @response_schema(ListUsersResponseSchema, 200)
  
     async def get(self):
         users = await self.request.app.crm_accessor.list_users()
-        raw_user = [UserGetResponseSchema().dump(user) for user in users]
+        raw_user = [UserSchema().dump(user) for user in users]
         return json_response(data={"users": raw_user})
     
 
@@ -42,9 +42,9 @@ class GetUserView(View):
     @docs(
             tags=["crm"],
             summary="Get user",
-            descridescription="Get users from database"
+            description="Get users from database"
     )
-    @querystring_schema(UserGetSchema)
+    @querystring_schema(UserGetRequestSchema)
     @response_schema(UserGetResponseSchema, 200)
     async def get(self):
         user_id = self.request.query["id"]
