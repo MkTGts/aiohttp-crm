@@ -1,8 +1,10 @@
 from aiohttp.web import Application as AiohttpAplication, run_app as aiohttp_run_app, View as AiohttpView, Request as AiohttpRequset
 from app.crm.routes import setup_routes
 from typing import Optional
+from aiohttp_apispec import setup_aiohttp_apispec
 from app.store.crm.accessor import CrmAccessor
 from app.store import setup_accessor
+from app.web.middlewares import setup_middlewares
 
 
 class Application(AiohttpAplication):
@@ -27,5 +29,7 @@ app = Application()
 
 def run_app():
     setup_routes(app)
+    setup_aiohttp_apispec(app, tytle="CRM Application", url="/docs/json", swagger_path="/docs")
+    setup_middlewares(app)
     setup_accessor(app)
     aiohttp_run_app(app)
