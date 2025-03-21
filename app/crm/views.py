@@ -4,7 +4,7 @@ from app.crm.models import User
 import uuid
 from aiohttp.web_exceptions import HTTPNotFound
 from aiohttp_apispec import docs, request_schema, response_schema, querystring_schema
-from app.crm.schemes import UserSchema, ListUsersResponseSchema, UserGetSchema, UserGetResponseSchema, UserAddSchema, UserGetRequestSchema
+from app.crm.schemes import UserSchema, ListUsersResponseSchema, UserGetResponseSchema, UserAddSchema, UserGetRequestSchema
 from app.web.schemes import OkResponseSchema
 
 
@@ -16,7 +16,6 @@ class AddUserView(View):
     )
     @request_schema(UserAddSchema)
     @response_schema(OkResponseSchema, 200)
-
     async def post(self):
         data = self.request["data"]
         user = User(email=data['email'], _id=uuid.uuid4())
@@ -34,8 +33,8 @@ class ListUsersView(View):
  
     async def get(self):
         users = await self.request.app.crm_accessor.list_users()
-        raw_user = [UserSchema().dump(user) for user in users]
-        return json_response(data={"users": raw_user})
+        raw_users = [UserSchema().dump(user) for user in users]
+        return json_response(data={"users": raw_users})
     
 
 class GetUserView(View):
